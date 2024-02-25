@@ -3,6 +3,7 @@ import os
 from PIL import Image
 import requests
 import datetime
+import base64
 
 
 def convert_rgba(image_path):
@@ -20,3 +21,8 @@ def save_image(results, output_dir):
         with open(filename, "wb") as f:
             f.write(requests.get(result.url).content)
         print("Saved to", filename)
+
+
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')

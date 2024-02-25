@@ -1,8 +1,5 @@
-import os
-from os.path import join, dirname
 from image_io import convert_rgba, save_image
 from openai import OpenAI
-import os
 
 client = OpenAI()
 
