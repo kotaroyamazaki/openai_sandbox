@@ -2,3 +2,4 @@
 outputs/*.png
 outputs/*.webp
 inputs/
+__pycache__/

@@ -1,10 +1,9 @@
 import datetime
 import os
 from os.path import join, dirname
-import requests
+from image_io import convert_rgba, save_image
 from openai import OpenAI
 from dotenv import load_dotenv
-from PIL import Image
 import os
 
 
@@ -24,17 +23,9 @@ client = OpenAI(
 # 入力画像のパス
 input_original_path = "inputs/original.png"
 input_mask_path = "inputs/mask.png"
-
 # input_original_pathとinput_mask_pathの画像を開いて画像が 'RGBA' モードでない場合にのみ変換を行う
-with Image.open(input_original_path) as img:
-    if img.mode != "RGBA":
-        img = img.convert("RGBA")
-        img.save(input_original_path)
-
-with Image.open(input_mask_path) as img:
-    if img.mode != "RGBA":
-        img = img.convert("RGBA")
-        img.save(input_mask_path)
+convert_rgba(input_original_path)
+convert_rgba(input_mask_path)
 
 response = client.images.edit(
     model="dall-e-2",
@@ -45,13 +36,5 @@ response = client.images.edit(
     size="1024x1024"
 )
 
-image_url = response.data[0].url
-
-# local のoutputsフォルダに保存する
-os.makedirs("outputs", exist_ok=True)
-# ファイル名は実行日時を使う
-filename = f"outputs/{datetime.datetime.now().isoformat()}.png"
-
-with open(filename, "wb") as f:
-    f.write(requests.get(image_url).content)
-print("Saved to", filename)
+result = response.data
+save_image([result], "outputs")
